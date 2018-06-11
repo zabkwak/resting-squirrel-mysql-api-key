@@ -1,7 +1,7 @@
 {
   "name": "resting-squirre-mysql-api-key",
   "version": "0.1.0",
-  "description": "",
+  "description": "Api key validator for resting-squirrel using mysql database.",
   "main": "index.js",
   "scripts": {
     "test": "mocha ./__tests__ --recursive --compilers js:babel-core/register --timeout 5000",
@@ -18,13 +18,25 @@
   "engines": {
     "node": ">=4"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zabkwak/resting-squirrel-mysql-api-key.git"
+  },
+  "bugs": {
+    "url": "https://github.com/zabkwak/resting-squirrel-mysql-api-key/issues"
+  },
+  "homepage": "https://github.com/zabkwak/resting-squirrel-mysql-api-key#readme",
   "dependencies": {
     "args-parser": "^1.1.0",
     "async": "^2.6.1",
     "command-line-usage": "^5.0.5",
     "http-smart-error": "^1.0.0",
     "md5": "^2.2.1",
-    "mysql": "^2.15.0"
+    "mysql": "^2.15.0",
+    "request": "^2.87.0"
+  },
+  "peerDependencies": {
+    "resting-squirrel": "^2.5.1"    
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
@@ -33,7 +45,7 @@
     "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "babel-preset-env": "^1.7.0",
     "chai": "^3.5.0",
-    "resting-squirrel": "^2.5.0",
+    "resting-squirrel": "^2.5.1",
     "run-script-os-fix": "^1.0.4"
   },
   "bin": {
