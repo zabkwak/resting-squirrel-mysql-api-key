@@ -60,6 +60,10 @@ export default (mysqlConfig) => {
         const apiKey = md5(`${Date.now()}rs-api-key${Date.now()}${Math.random()}`);
         pool.query(`insert into rs_api_key (\`identificator\`, \`api_key\`, \`limit\`) values (${pool.escape(identificator)}, ${pool.escape(apiKey)}, ${pool.escape(limit)})`, (err) => {
             if (err) {
+                if (err.code === 'ER_DUP_ENTRY') {
+                    cb(new Error(`Api key for identificator '${identificator}' already exists.`));
+                    return;
+                }
                 cb(err);
                 return;
             }
