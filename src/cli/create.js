@@ -1,10 +1,63 @@
 #!/usr/bin/env node
 
 import argsParser from 'args-parser';
+import commandLineUsage from 'command-line-usage';
 
 import RSApiKey from '../';
 
 const args = argsParser(process.argv);
+
+if (args.h || args.help) {
+
+    const sections = [
+        {
+            header: 'Resting Squirrel MySQL Api key creator',
+            content: 'Creates {italic api key} for the identificator.',
+        },
+        {
+            header: 'Options',
+            optionList: [
+                {
+                    name: 'identificator',
+                    typeLabel: '<string>',
+                    description: 'Identificator of the API client.',
+                },
+                {
+                    name: 'limit',
+                    typeLabel: '<integer>',
+                    description: 'Limit for the daily quota. Default 0.',
+                },
+                {
+                    name: 'mysq-host',
+                    typeLabel: '<string>',
+                    description: 'Host of the mysql server. Default "localhost".',
+                },
+                {
+                    name: 'mysq-user',
+                    typeLabel: '<string>',
+                    description: 'User to log in to the mysql server. Default "root".',
+                },
+                {
+                    name: 'mysq-password',
+                    typeLabel: '<string>',
+                    description: 'Passwrod of the user to log in to the mysql server. Default "".',
+                },
+                {
+                    name: 'mysq-database',
+                    typeLabel: '<string>',
+                    description: 'Database. Default "rs_api_key".',
+                },
+                {
+                    name: 'help',
+                    description: 'Print this usage guide.',
+                },
+            ],
+        },
+    ];
+    console.log(commandLineUsage(sections))
+
+    process.exit(0);
+}
 
 if (!args.identificator) {
     console.error('Argument identificator is missing');

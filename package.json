@@ -21,6 +21,7 @@
   "dependencies": {
     "args-parser": "^1.1.0",
     "async": "^2.6.1",
+    "command-line-usage": "^5.0.5",
     "http-smart-error": "^1.0.0",
     "md5": "^2.2.1",
     "mysql": "^2.15.0"
