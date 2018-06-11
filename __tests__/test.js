@@ -20,6 +20,7 @@ describe('Module creation', () => {
         const m = RSApiKey(MYSQL_CONFIG);
         expect(m).to.be.a('function');
         expect(m.createApiKey).to.be.a('function');
+        expect(m.removeApiKey).to.be.a('function');
     });
 
     it('creates the module with the mysql config as pool', () => {
@@ -27,16 +28,24 @@ describe('Module creation', () => {
         const m = RSApiKey(pool);
         expect(m).to.be.a('function');
         expect(m.createApiKey).to.be.a('function');
+        expect(m.removeApiKey).to.be.a('function');
     });
 });
 
 describe('Api key creation', () => {
 
+    const m = RSApiKey(MYSQL_CONFIG);
+
     it('creates the api key for identificator', (done) => {
-        const m = RSApiKey(MYSQL_CONFIG);
-        expect(m).to.be.a('function');
-        expect(m.createApiKey).to.be.a('function');
-        m.createApiKey('identificator', (err, apiKey) => {
+        m.createApiKey(`identificator-${Date.now()}`, (err, apiKey) => {
+            expect(err).to.be.null;
+            expect(apiKey).to.be.a('string');
+            done();
+        });
+    });
+
+    it('creates the api key with limit 1', (done) => {
+        m.createApiKey('identificator-limit', 1, (err, apiKey) => {
             expect(err).to.be.null;
             expect(apiKey).to.be.a('string');
             API_KEY = apiKey;
@@ -45,13 +54,9 @@ describe('Api key creation', () => {
     });
 
     it('tries to create api key for same identificator', (done) => {
-        const m = RSApiKey(MYSQL_CONFIG);
-        expect(m).to.be.a('function');
-        expect(m.createApiKey).to.be.a('function');
-        m.createApiKey('identificator', (err, apiKey) => {
-            // I have no idea why the to.be.an('object') is not working
-            expect(typeof err).to.be.equal('object');
-            expect(err.code).to.be.equal('ER_DUP_ENTRY');
+        m.createApiKey('identificator-limit', (err, apiKey) => {
+            expect(err).to.be.an.instanceOf(Error);
+            expect(err.message).to.be.equal('Api key for identificator \'identificator-limit\' already exists.');
             done();
         });
     });
@@ -59,10 +64,10 @@ describe('Api key creation', () => {
 
 describe('Validator function call', () => {
 
-    it('crates the module and calls the validtor function with invalid api key', (done) => {
-        const m = RSApiKey(MYSQL_CONFIG);
-        expect(m).to.be.a('function');
-        expect(m.createApiKey).to.be.a('function');
+    
+    const m = RSApiKey(MYSQL_CONFIG);
+
+    it('calls the validator function with invalid api key', (done) => {
         m('API_KEY', (err) => {
             expect(err).to.be.an.instanceOf(HttpError);
             const { message, code, statusCode, api_key } = err;
@@ -73,6 +78,24 @@ describe('Validator function call', () => {
             done();
         });
     });
+
+    it('calls the validator function with valid api key', (done) => {
+        m(API_KEY, (err) => {
+            expect(err).to.be.null;
+            done();
+        });
+    });
+
+    it('calls the validator function with valid api key which does not have remaining quota', (done) => {
+        m(API_KEY, (err) => {
+            expect(err).to.be.an.instanceOf(HttpError);
+            const { message, code, statusCode } = err;
+            expect(message).to.be.equal('Api key calls limit exceeded.');
+            expect(code).to.be.equal('ERR_API_KEY_LIMIT_EXCEEDED');
+            expect(statusCode).to.be.equal(403);
+            done();
+        });
+    });
 });
 
 describe('Api key removal', () => {
@@ -80,7 +103,7 @@ describe('Api key removal', () => {
     it('removes the api key', (done) => {
         const m = RSApiKey(MYSQL_CONFIG);
         expect(m).to.be.a('function');
-        expect(m.createApiKey).to.be.a('function');
+        expect(m.removeApiKey).to.be.a('function');
         m.removeApiKey(API_KEY, (err) => {
             expect(err).to.be.null;
             done();

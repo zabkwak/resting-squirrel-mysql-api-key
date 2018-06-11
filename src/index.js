@@ -14,6 +14,14 @@ const QUERIES = [`
         UNIQUE KEY \`api_key\` (\`api_key\`)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_czech_ci;
     `,
+    `
+    CREATE TABLE IF NOT EXISTS \`rs_api_key_limit\` (
+        \`api_key\` char(255) COLLATE utf8_czech_ci NOT NULL,
+        \`date\` date NOT NULL DEFAULT 0,
+        \`count\` int(11) NOT NULL DEFAULT 1,
+        PRIMARY KEY (\`api_key\`, \`date\`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_czech_ci;
+    `
 ];
 
 /**
@@ -47,8 +55,43 @@ export default (mysqlConfig) => {
                 next(HttpError.create(403, 'Invalid API key.', 'api_key_invalid', { api_key: apiKey }));
                 return;
             }
-            // TODO api key quota
-            next();
+            const { api_key, limit } = rows.shift();
+            if (limit === 0) {
+                next(null);
+                return;
+            }
+            pool.query(`select * from rs_api_key_limit where api_key = ${pool.escape(apiKey)} && \`date\` = CURRENT_DATE limit 0, 1`, (err, rows) => {
+                if (err) {
+                    next(err);
+                    return;
+                }
+                let remains = limit;
+                if (rows.length) {
+                    const { count } = rows.shift();
+                    remains -= count;
+                }
+                if (remains === 0) {
+                    next(HttpError.create(403, 'Api key calls limit exceeded.', 'api_key_limit_exceeded'));
+                    return;
+                }
+                pool.query(`update rs_api_key_limit set \`count\` = \`count\` + 1 where api_key = ${pool.escape(apiKey)} && \`date\` = CURRENT_DATE`, (err, info) => {
+                    if (err) {
+                        next(err);
+                        return;
+                    }
+                    if (info.affectedRows) {
+                        next(null);
+                        return;
+                    }
+                    pool.query(`insert into rs_api_key_limit (api_key, \`date\`) values (${pool.escape(apiKey)}, ${pool.escape(new Date())})`, (err) => {
+                        if (err) {
+                            next(err);
+                            return;
+                        }
+                        next(null);
+                    });
+                });
+            });
         });
     };
 
@@ -71,7 +114,7 @@ export default (mysqlConfig) => {
         });
     };
 
-    handleMiddleware.removeApiKey = (apiKey, cb = () => {}) => {
+    handleMiddleware.removeApiKey = (apiKey, cb = () => { }) => {
         pool.query(`delete from rs_api_key where api_key = ${pool.escape(apiKey)}`, cb);
     };
 
