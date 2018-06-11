@@ -1,0 +1,36 @@
+{
+  "name": "resting-squirre-mysql-api-key",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha ./__tests__ --recursive --compilers js:babel-core/register --timeout 5000",
+    "create_index": "run-script-os",
+    "create_index:win32": "echo module.exports = require('./dist'); > index.js",
+    "create_index:linux:darwin": "echo \"module.exports = require('./dist');\" > index.js",
+    "build_es6": "./node_modules/.bin/babel ./src --out-dir ./dist --copy-files && npm run create_index",
+    "clear": "rm -rf ./dist && rm -f ./index.js",
+    "prepublish": "npm run build_es6",
+    "postpublish": "npm run clear"
+  },
+  "author": "Lukas Macuda <lukas.macuda@gmail.com>",
+  "license": "MIT",
+  "engines": {
+    "node": ">=4"
+  },
+  "dependencies": {
+    "async": "^2.6.1",
+    "http-smart-error": "^1.0.0",
+    "mysql": "^2.15.0"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-core": "^6.26.3",
+    "babel-plugin-transform-class-properties": "^6.24.1",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
+    "babel-preset-env": "^1.7.0",
+    "chai": "^3.5.0",
+    "resting-squirrel": "^2.5.0",
+    "run-script-os-fix": "^1.0.4"
+  }
+}
