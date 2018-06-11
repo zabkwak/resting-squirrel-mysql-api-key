@@ -1,6 +1,6 @@
 {
-  "name": "resting-squirre-mysql-api-key",
-  "version": "0.1.0",
+  "name": "resting-squirrel-mysql-api-key",
+  "version": "0.1.1",
   "description": "Api key validator for resting-squirrel using mysql database.",
   "main": "index.js",
   "scripts": {
