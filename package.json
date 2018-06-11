@@ -35,6 +35,12 @@
     "mysql": "^2.15.0",
     "request": "^2.87.0"
   },
+  "keywords": [
+    "api",
+    "key",
+    "mysql",
+    "resting-squirrel"
+  ],
   "peerDependencies": {
     "resting-squirrel": "^2.5.1"    
   },
