@@ -44,7 +44,12 @@ rsApiKey.createApiKey('identificator', 50, (err, apiKey) => {
 ```bash
 # Creates api key for client "identificator" with 50 daily api calls limit
 node_modules/.bin/rs-api-key-create --identificator=identificator --limit=50 --mysql-host=localhost --mysql-user=user --mysql-password=passwd --mysql-database=project_database
+# Creates api key for client "identificator" with 50 daily api calls limit with mysql url connection string
+node_modules/.bin/rs-api-key-create --mysql=mysql://user:passwd@localhost/project_database
 ```
 
 ## TODO
-- mysql connection string in the cli command
+### CLI
+- delete api key
+- update api key
+- reset quota

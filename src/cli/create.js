@@ -28,22 +28,27 @@ if (args.h || args.help) {
                     description: 'Limit for the daily quota. Default 0.',
                 },
                 {
-                    name: 'mysq-host',
+                    name: 'mysql',
+                    typeLabel: '<string>',
+                    description: 'MySQL uri connection string mysql://[user]:[password]@[host]/[database]'
+                },
+                {
+                    name: 'mysql-host',
                     typeLabel: '<string>',
                     description: 'Host of the mysql server. Default "localhost".',
                 },
                 {
-                    name: 'mysq-user',
+                    name: 'mysql-user',
                     typeLabel: '<string>',
                     description: 'User to log in to the mysql server. Default "root".',
                 },
                 {
-                    name: 'mysq-password',
+                    name: 'mysql-password',
                     typeLabel: '<string>',
                     description: 'Passwrod of the user to log in to the mysql server. Default "".',
                 },
                 {
-                    name: 'mysq-database',
+                    name: 'mysql-database',
                     typeLabel: '<string>',
                     description: 'Database. Default "rs_api_key".',
                 },
@@ -64,7 +69,7 @@ if (!args.identificator) {
     process.exit(1);
 }
 
-const rsApiKey = RSApiKey({
+const rsApiKey = RSApiKey(args.mysql || {
     host: args['mysql-host'] || 'localhost',
     user: args['mysql-user'] || 'root',
     password: args['mysql-password'] || '',
