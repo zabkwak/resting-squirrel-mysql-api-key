@@ -3,6 +3,8 @@ import async from 'async';
 import md5 from 'md5';
 import HttpError from 'http-smart-error';
 
+import Pool from 'mysql/lib/Pool';
+
 const QUERIES = [`
     CREATE TABLE IF NOT EXISTS \`rs_api_key\` (
         \`identificator\` char(100) COLLATE utf8_czech_ci NOT NULL,
@@ -29,9 +31,7 @@ const QUERIES = [`
  * @module
  */
 export default (mysqlConfig) => {
-
-    // importing Pool class from the mysql lib and checking the instanceof is not working (for some reason) so if the constructor name is pool the pool is not created again
-    const pool = mysqlConfig.constructor && mysql.constructor.name === 'Pool' ? mysqlConfig : mysql.createPool(mysqlConfig);
+    const pool = mysqlConfig instanceof Pool ? mysqlConfig : mysql.createPool(mysqlConfig);
     let ready = false;
 
     async.each(QUERIES, (query, callback) => pool.query(query, callback), (err) => {
