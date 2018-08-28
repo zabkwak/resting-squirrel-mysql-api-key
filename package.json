@@ -3,6 +3,7 @@
   "version": "0.2.0",
   "description": "Api key validator for resting-squirrel using mysql database.",
   "main": "index.js",
+  "types": "./dist/__types__/index.d.ts",
   "scripts": {
     "test": "mocha ./__tests__ --recursive --compilers js:babel-core/register --timeout 5000",
     "create_index": "run-script-os",
@@ -42,9 +43,10 @@
     "resting-squirrel"
   ],
   "peerDependencies": {
-    "resting-squirrel": "^2.5.1"    
+    "resting-squirrel": "^2.5.1"
   },
   "devDependencies": {
+    "@types/mysql": "^2.15.5",
     "babel-cli": "^6.26.0",
     "babel-core": "^6.26.3",
     "babel-plugin-transform-class-properties": "^6.24.1",
