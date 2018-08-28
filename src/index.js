@@ -56,10 +56,6 @@ export default (mysqlConfig) => {
                 return;
             }
             const { api_key, limit } = rows.shift();
-            if (limit === 0) {
-                next(null);
-                return;
-            }
             pool.query(`select * from rs_api_key_limit where api_key = ${pool.escape(apiKey)} && \`date\` = CURRENT_DATE limit 0, 1`, (err, rows) => {
                 if (err) {
                     next(err);
@@ -70,7 +66,7 @@ export default (mysqlConfig) => {
                     const { count } = rows.shift();
                     remains -= count;
                 }
-                if (remains === 0) {
+                if (limit > 0 && remains === 0) {
                     next(HttpError.create(403, 'Api key calls limit exceeded.', 'api_key_limit_exceeded'));
                     return;
                 }
