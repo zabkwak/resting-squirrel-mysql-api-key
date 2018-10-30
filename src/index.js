@@ -61,7 +61,7 @@ export default (mysqlConfig) => {
         }
         const keys = await query(pool, `select * from rs_api_key where api_key = ${pool.escape(apiKey)} && valid = 1 limit 0, 1`);
         if (!keys.length) {
-            throw HttpError.create(403, 'Invalid API key.', 'api_key_invalid', { api_key: apiKey });
+            return false;
         }
         const { api_key, limit } = keys.shift();
         const limits = await query(pool, `select * from rs_api_key_limit where api_key = ${pool.escape(apiKey)} && \`date\` = CURRENT_DATE limit 0, 1`);

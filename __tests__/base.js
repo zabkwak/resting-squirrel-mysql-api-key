@@ -69,17 +69,7 @@ describe('Validator function call', () => {
     const m = RSApiKey(MYSQL_CONFIG);
 
     it('calls the validator function with invalid api key', async () => {
-        try {
-            await m('API_KEY');
-            throw new SmartError('Should reject.', 'should_reject');
-        } catch (err) {
-            expect(err).to.be.an.instanceOf(HttpError);
-            const { message, code, statusCode, api_key } = err;
-            expect(message).to.be.equal('Invalid API key.');
-            expect(code).to.be.equal('ERR_API_KEY_INVALID');
-            expect(statusCode).to.be.equal(403);
-            expect(api_key).to.be.equal('API_KEY');
-        }
+        expect(await m('API_KEY')).to.be.false;
     });
 
     it('calls the validator function with valid api key', async () => {

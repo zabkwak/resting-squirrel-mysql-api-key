@@ -83,8 +83,8 @@ describe('RS calls', () => {
             expect(res.statusCode).to.be.equal(403);
             expect(body).to.have.all.keys(['error', '_meta']);
             const { message, code } = body.error;
-            expect(message).to.be.equal('Invalid API key.');
-            expect(code).to.be.equal('ERR_API_KEY_INVALID');
+            expect(message).to.be.equal('Api key is invalid.');
+            expect(code).to.be.equal('ERR_INVALID_API_KEY');
             done();
         });
     });
