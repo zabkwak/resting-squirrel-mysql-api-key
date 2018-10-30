@@ -30,10 +30,11 @@
   "dependencies": {
     "args-parser": "^1.1.0",
     "async": "^2.6.1",
+    "babel-polyfill": "^6.26.0",
     "command-line-usage": "^5.0.5",
-    "http-smart-error": "^1.0.0",
+    "http-smart-error": "^1.1.1",
     "md5": "^2.2.1",
-    "mysql": "^2.15.0",
+    "mysql": "^2.16.0",
     "request": "^2.87.0"
   },
   "keywords": [
@@ -43,7 +44,7 @@
     "resting-squirrel"
   ],
   "peerDependencies": {
-    "resting-squirrel": "^2.5.1"
+    "resting-squirrel": "^2.10.0"
   },
   "devDependencies": {
     "@types/mysql": "^2.15.5",
@@ -53,7 +54,7 @@
     "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "babel-preset-env": "^1.7.0",
     "chai": "^3.5.0",
-    "resting-squirrel": "^2.5.1",
+    "resting-squirrel": "^2.10.0",
     "run-script-os-fix": "^1.0.4"
   },
   "bin": {

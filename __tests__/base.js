@@ -1,6 +1,7 @@
 import { expect } from 'chai';
 import mysql from 'mysql';
 import HttpError from 'http-smart-error';
+import SmartError from 'smart-error';
 
 import RSApiKey from '../src';
 
@@ -64,37 +65,37 @@ describe('Api key creation', () => {
 
 describe('Validator function call', () => {
 
-    
+
     const m = RSApiKey(MYSQL_CONFIG);
 
-    it('calls the validator function with invalid api key', (done) => {
-        m('API_KEY', (err) => {
+    it('calls the validator function with invalid api key', async () => {
+        try {
+            await m('API_KEY');
+            throw new SmartError('Should reject.', 'should_reject');
+        } catch (err) {
             expect(err).to.be.an.instanceOf(HttpError);
             const { message, code, statusCode, api_key } = err;
             expect(message).to.be.equal('Invalid API key.');
             expect(code).to.be.equal('ERR_API_KEY_INVALID');
             expect(statusCode).to.be.equal(403);
             expect(api_key).to.be.equal('API_KEY');
-            done();
-        });
+        }
     });
 
-    it('calls the validator function with valid api key', (done) => {
-        m(API_KEY, (err) => {
-            expect(err).to.be.null;
-            done();
-        });
+    it('calls the validator function with valid api key', async () => {
+        await m(API_KEY);
     });
 
-    it('calls the validator function with valid api key which does not have remaining quota', (done) => {
-        m(API_KEY, (err) => {
+    it('calls the validator function with valid api key which does not have remaining quota', async () => {
+        try {
+            await m(API_KEY);
+        } catch (err) {
             expect(err).to.be.an.instanceOf(HttpError);
             const { message, code, statusCode } = err;
             expect(message).to.be.equal('Api key calls limit exceeded.');
             expect(code).to.be.equal('ERR_API_KEY_LIMIT_EXCEEDED');
             expect(statusCode).to.be.equal(403);
-            done();
-        });
+        }
     });
 });
 

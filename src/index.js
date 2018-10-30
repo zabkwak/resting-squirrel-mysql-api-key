@@ -1,3 +1,4 @@
+import 'babel-polyfill';
 import mysql from 'mysql';
 import async from 'async';
 import md5 from 'md5';
@@ -26,6 +27,18 @@ const QUERIES = [`
     `
 ];
 
+const query = (pool, query) => new Promise((resolve, reject) => {
+    pool.query(query, (err, data) => {
+        if (err) {
+            reject(err);
+            return;
+        }
+        resolve(data);
+    });
+});
+
+const wait = (timeout = 10) => new Promise(resolve => setTimeout(resolve, timeout));
+
 /**
  * @param {MysqlConfig|mysql.Pool}
  * @module
@@ -41,54 +54,30 @@ export default (mysqlConfig) => {
         ready = true;
     });
 
-    const handleMiddleware = (apiKey, next) => {
+    const handleMiddleware = async (apiKey) => {
         if (!ready) {
-            setTimeout(() => handleMiddleware(apiKey, next), 10);
-            return;
+            wait();
+            return handleMiddleware(apiKey);
         }
-        pool.query(`select * from rs_api_key where api_key = ${pool.escape(apiKey)} && valid = 1 limit 0, 1`, (err, rows) => {
-            if (err) {
-                next(err);
-                return;
-            }
-            if (!rows.length) {
-                next(HttpError.create(403, 'Invalid API key.', 'api_key_invalid', { api_key: apiKey }));
-                return;
-            }
-            const { api_key, limit } = rows.shift();
-            pool.query(`select * from rs_api_key_limit where api_key = ${pool.escape(apiKey)} && \`date\` = CURRENT_DATE limit 0, 1`, (err, rows) => {
-                if (err) {
-                    next(err);
-                    return;
-                }
-                let remains = limit;
-                if (rows.length) {
-                    const { count } = rows.shift();
-                    remains -= count;
-                }
-                if (limit > 0 && remains === 0) {
-                    next(HttpError.create(403, 'Api key calls limit exceeded.', 'api_key_limit_exceeded'));
-                    return;
-                }
-                pool.query(`update rs_api_key_limit set \`count\` = \`count\` + 1 where api_key = ${pool.escape(apiKey)} && \`date\` = CURRENT_DATE`, (err, info) => {
-                    if (err) {
-                        next(err);
-                        return;
-                    }
-                    if (info.affectedRows) {
-                        next(null);
-                        return;
-                    }
-                    pool.query(`insert into rs_api_key_limit (api_key, \`date\`) values (${pool.escape(apiKey)}, ${pool.escape(new Date())})`, (err) => {
-                        if (err) {
-                            next(err);
-                            return;
-                        }
-                        next(null);
-                    });
-                });
-            });
-        });
+        const keys = await query(pool, `select * from rs_api_key where api_key = ${pool.escape(apiKey)} && valid = 1 limit 0, 1`);
+        if (!keys.length) {
+            throw HttpError.create(403, 'Invalid API key.', 'api_key_invalid', { api_key: apiKey });
+        }
+        const { api_key, limit } = keys.shift();
+        const limits = await query(pool, `select * from rs_api_key_limit where api_key = ${pool.escape(apiKey)} && \`date\` = CURRENT_DATE limit 0, 1`);
+        let remains = limit;
+        if (limits.length) {
+            const { count } = limits.shift();
+            remains -= count;
+        }
+        if (limit > 0 && remains === 0) {
+            throw HttpError.create(403, 'Api key calls limit exceeded.', 'api_key_limit_exceeded');
+        }
+        const info = await query(pool, `update rs_api_key_limit set \`count\` = \`count\` + 1 where api_key = ${pool.escape(apiKey)} && \`date\` = CURRENT_DATE`);
+        if (!info.affectedRows) {
+            await query(pool, `insert into rs_api_key_limit (api_key, \`date\`) values (${pool.escape(apiKey)}, ${pool.escape(new Date())})`);
+        }
+        return true;
     };
 
     handleMiddleware.createApiKey = (identificator, limit, cb = () => { }) => {

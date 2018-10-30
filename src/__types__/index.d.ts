@@ -11,7 +11,7 @@ declare module 'resting-squirrel-mysql-api-key' {
     }
 
     export default function (config: IMysqlConfig | mysql.Pool): {
-        (apiKey: string, next: (err?: Error) => void): void;
+        (apiKey: string): Promise<boolean>;
 
         createApiKey(identificator: string): void;
         createApiKey(identificator: string, cb: (err?: Error, apiKey?: string) => void): void;
