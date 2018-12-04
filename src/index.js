@@ -44,7 +44,18 @@ const wait = (timeout = 10) => new Promise(resolve => setTimeout(resolve, timeou
  * @module
  */
 export default (mysqlConfig) => {
-    const pool = mysqlConfig instanceof Pool ? mysqlConfig : mysql.createPool(mysqlConfig);
+    let pool;
+    if (mysqlConfig instanceof Pool) {
+        pool = mysqlConfig;
+    } else {
+        const keys = Object.keys(mysqlConfig);
+        // Problem with node.js dependencies if mysql module has different versions accross the modules
+        if (keys.includes('config') && keys.includes('_events') && keys.includes('_allConnections')) {
+            pool = mysqlConfig;
+        } else {
+            pool = mysql.createPool(mysqlConfig);
+        }
+    }
     let ready = false;
 
     async.each(QUERIES, (query, callback) => pool.query(query, callback), (err) => {
