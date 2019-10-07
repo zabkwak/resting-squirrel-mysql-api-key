@@ -1,4 +1,4 @@
-import 'babel-polyfill';
+import '@babel/polyfill';
 import mysql from 'mysql';
 import async from 'async';
 import md5 from 'md5';
