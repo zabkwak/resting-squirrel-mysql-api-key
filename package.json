@@ -1,63 +1,65 @@
 {
-  "name": "resting-squirrel-mysql-api-key",
-  "version": "0.4.0",
-  "description": "Api key validator for resting-squirrel using mysql database.",
-  "main": "index.js",
-  "types": "./dist/__types__/index.d.ts",
-  "scripts": {
-    "test": "mocha ./__tests__ --recursive --compilers js:babel-core/register --timeout 5000",
-    "create_index": "run-script-os",
-    "create_index:win32": "echo module.exports = require('./dist'); > index.js",
-    "create_index:linux:darwin": "echo \"module.exports = require('./dist');\" > index.js",
-    "build_es6": "./node_modules/.bin/babel ./src --out-dir ./dist --copy-files && npm run create_index",
-    "clear": "rm -rf ./dist && rm -f ./index.js",
-    "prepublish": "npm run build_es6",
-    "postpublish": "npm run clear"
-  },
-  "author": "Lukas Macuda <lukas.macuda@gmail.com>",
-  "license": "MIT",
-  "engines": {
-    "node": ">=4"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/zabkwak/resting-squirrel-mysql-api-key.git"
-  },
-  "bugs": {
-    "url": "https://github.com/zabkwak/resting-squirrel-mysql-api-key/issues"
-  },
-  "homepage": "https://github.com/zabkwak/resting-squirrel-mysql-api-key#readme",
-  "dependencies": {
-    "args-parser": "^1.1.0",
-    "async": "^2.6.1",
-    "babel-polyfill": "^6.26.0",
-    "command-line-usage": "^5.0.5",
-    "http-smart-error": "^1.1.1",
-    "md5": "^2.2.1",
-    "mysql": "^2.16.0",
-    "request": "^2.87.0"
-  },
-  "keywords": [
-    "api",
-    "key",
-    "mysql",
-    "resting-squirrel"
-  ],
-  "peerDependencies": {
-    "resting-squirrel": "^2.10.0"
-  },
-  "devDependencies": {
-    "@types/mysql": "^2.15.5",
-    "babel-cli": "^6.26.0",
-    "babel-core": "^6.26.3",
-    "babel-plugin-transform-class-properties": "^6.24.1",
-    "babel-plugin-transform-object-rest-spread": "^6.26.0",
-    "babel-preset-env": "^1.7.0",
-    "chai": "^3.5.0",
-    "resting-squirrel": "^2.10.0",
-    "run-script-os-fix": "^1.0.4"
-  },
-  "bin": {
-    "rs-api-key-create": "./dist/cli/create.js"
-  }
+	"name": "resting-squirrel-mysql-api-key",
+	"version": "0.4.0",
+	"description": "Api key validator for resting-squirrel using mysql database.",
+	"main": "index.js",
+	"types": "./dist/__types__/index.d.ts",
+	"scripts": {
+		"test": "./node_modules/.bin/mocha ./__tests__ --recursive --require @babel/register --timeout 5000 --exit",
+		"create_index": "run-script-os",
+		"create_index:win32": "echo module.exports = require('./dist'); > index.js",
+		"create_index:linux:darwin": "echo \"module.exports = require('./dist');\" > index.js",
+		"build_es6": "./node_modules/.bin/babel ./src --out-dir ./dist --copy-files && npm run create_index",
+		"clear": "rm -rf ./dist && rm -f ./index.js",
+		"prepublish": "npm run build_es6",
+		"postpublish": "npm run clear"
+	},
+	"author": "Lukas Macuda <lukas.macuda@gmail.com>",
+	"license": "MIT",
+	"engines": {
+		"node": ">=4"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/zabkwak/resting-squirrel-mysql-api-key.git"
+	},
+	"bugs": {
+		"url": "https://github.com/zabkwak/resting-squirrel-mysql-api-key/issues"
+	},
+	"homepage": "https://github.com/zabkwak/resting-squirrel-mysql-api-key#readme",
+	"dependencies": {
+		"@babel/polyfill": "^7.4.4",
+		"args-parser": "^1.1.0",
+		"async": "^2.6.3",
+		"command-line-usage": "^5.0.5",
+		"http-smart-error": "^1.1.1",
+		"md5": "^2.2.1",
+		"mysql": "^2.17.1",
+		"request": "^2.87.0"
+	},
+	"keywords": [
+		"api",
+		"key",
+		"mysql",
+		"resting-squirrel"
+	],
+	"peerDependencies": {
+		"resting-squirrel": "^2.10.0"
+	},
+	"devDependencies": {
+		"@babel/cli": "^7.5.5",
+		"@babel/core": "^7.5.5",
+		"@babel/plugin-proposal-class-properties": "^7.5.5",
+		"@babel/plugin-proposal-object-rest-spread": "^7.5.5",
+		"@babel/preset-env": "^7.5.5",
+		"@babel/register": "^7.5.5",
+		"@types/mysql": "^2.15.7",
+		"chai": "^3.5.0",
+		"mocha": "^6.2.1",
+		"resting-squirrel": "^2.17.3",
+		"run-script-os-fix": "^1.0.4"
+	},
+	"bin": {
+		"rs-api-key-create": "./dist/cli/create.js"
+	}
 }
