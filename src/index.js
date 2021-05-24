@@ -20,7 +20,7 @@ const QUERIES = [`
     `
     CREATE TABLE IF NOT EXISTS \`rs_api_key_limit\` (
         \`api_key\` char(255) COLLATE utf8_czech_ci NOT NULL,
-        \`date\` date NOT NULL DEFAULT CURRENT_DATE,
+        \`date\` date,
         \`count\` int(11) NOT NULL DEFAULT 1,
         PRIMARY KEY (\`api_key\`, \`date\`)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_czech_ci;
